@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/wk8/gold.svg?branch=master)](https://travis-ci.com/wk8/gold)
+
 # gold
 
 A simple golang lib to [case-fold](https://www.w3.org/International/wiki/Case_folding) UTF8 strings. Go-fold didn't sound quite as nice as `gold`!
