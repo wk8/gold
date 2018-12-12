@@ -12,7 +12,7 @@ That's why this lib gives you functions to convert UTF-8 strings to their case-f
 
 ## Installation
 
-```
+```bash
 go get -u github.com/wk8/gold
 ```
 
@@ -21,15 +21,15 @@ Or use your favorite golang vendoring tool!
 ## Usage
 
 The two main functions are:
-```
-func CaseFoldString(string) string
-func CaseFoldBytes([]byte) []byte
+```go
+CaseFoldString(string) string
+CaseFoldBytes([]byte) []byte
 ```
 They respectively convert a `string` or a `[]byte` to their case-folded representation.
 
 For example:
 
-```
+```go
 package main
 
 import (
@@ -49,9 +49,9 @@ func main() {
 ```
 
 If you're more concerned about memory usage than speed, you can also use the functionally equivalent
-```
-func CaseFoldStringLowMem(string) string
-func CaseFoldBytesLowMem([]byte) []byte
+```go
+CaseFoldStringLowMem(string) string
+CaseFoldBytesLowMem([]byte) []byte
 ```
 functions instead (half the memory usage, but twice as slow).
 
