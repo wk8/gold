@@ -57,52 +57,50 @@ func CaseFoldBytesLowMem(bytes []byte) []byte {
 
 const asciiUpperToLowerDiff = 'a' - 'A'
 
-func foldOverCanonicalRunes(bytes []byte, f func(rn rune, rnSize int)) {
+func foldOverCanonicalRunes(bytes []byte, f func(rune, int)) {
+	var rn, current, next rune
+	var rnSize int
+
 	for len(bytes) != 0 {
 		// extract the next rune, and reduce to its canonical equivalent rune,
 		// defined as being the biggest ASCII equivalent one if one exists,
 		// otherwise the smallest one
-		var r rune
-		n := 1
 
 		// fast check for ASCII
 		if bytes[0] < utf8.RuneSelf {
-			r = rune(bytes[0])
+			rn, rnSize = rune(bytes[0]), 1
 		} else {
 			// not ASCII, let's extract the rune
-			r, n = utf8.DecodeRune(bytes)
+			rn, rnSize = utf8.DecodeRune(bytes)
 
-			// and let's cycle through equivalent unicode runs until we hit the
+			// and let's cycle through equivalent unicode runes until we hit the
 			// biggest
-			current, next := r, utf8.MaxRune+1
-			for {
-				next = unicode.SimpleFold(current)
-				if next <= r {
-					break
-				}
+			current, next = rn, unicode.SimpleFold(rn)
+			for next > rn {
 				current = next
+				next = unicode.SimpleFold(current)
 			}
 
 			if next < utf8.RuneSelf {
 				// we've found an ASCII equivalent, let it fall through to the
 				// ASCII case below
-				r = next
+				rn = next
 			} else {
 				// no ASCII equivalent, we keep the biggest equivalent
-				r = current
+				rn = current
 			}
 		}
 
 		// if ASCII, let's convert upper to lower
-		if r < utf8.RuneSelf {
-			if 'A' <= r && r <= 'Z' {
-				r += asciiUpperToLowerDiff
+		if rn < utf8.RuneSelf {
+			if 'A' <= rn && rn <= 'Z' {
+				rn += asciiUpperToLowerDiff
 			}
-			f(r, 1)
+			f(rn, 1)
 		} else {
-			f(r, utf8.RuneLen(r))
+			f(rn, utf8.RuneLen(rn))
 		}
 
-		bytes = bytes[n:]
+		bytes = bytes[rnSize:]
 	}
 }
